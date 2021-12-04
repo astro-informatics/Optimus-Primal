@@ -12,25 +12,38 @@ Optimus-Primal: Lightweight primal-dual solver
 .. image:: http://img.shields.io/badge/arXiv-XXXX.0XXXX-orange.svg?style=flat
     :target: https://arxiv.org/abs/XXXX.0XXXX
 
-A light weight proximal splitting Forward Backward Primal Dual based solver for convex optimization problems. 
-
+``optimusprimal`` is a light weight proximal splitting Forward Backward Primal Dual based solver for convex optimization problems. 
 The current version supports finding the minimum of f(x) + h(A x) + p(B x) + g(x), where f, h, and p are lower semi continuous and have proximal operators, and g is differentiable. A and B are linear operators.
-
 To learn more about proximal operators and algorithms, visit `proximity operator repository <http://proximity-operator.net/index.html>`_. We suggest that users read the tutorial `"The Proximity Operator Repository. User's guide" <http://proximity-operator.net/download/guide.pdf>`_.
 
-INSTALL
+QUICK INSTALL
 ==============================================
-You can install from the master branch
-
-.. code-block:: bash
-
-    pip install git+https://github.com/Luke-Pratley/Optimus-Primal.git@master#egg=optimusprimal
-
-or from a frozen version at `pypi <https://pypi.org/project/optimusprimal/>`_
-
+You can install ``optimusprimal`` from PyPi by running
 .. code-block:: bash
 
     pip install optimusprimal
+
+INSTALL FROM SOURCE
+==============================================
+Alternatively, you can install ``optimusprimal`` from GitHub by first cloning the repository 
+
+.. code-block:: bash
+
+    git clone git@github.com:astro-informatics/Optimus-Primal.git
+    cd Optimus-Primal
+
+and running the build script 
+
+.. code-block:: bash 
+
+    bash build_optimusprimal.sh 
+
+Following which unit tests can be run 
+
+.. code-block:: bash
+
+    pytest --black optimusprimal/tests/
+
 
 CONTRIBUTORS
 ==============================================
