@@ -19,6 +19,7 @@ To learn more about proximal operators and algorithms, visit `proximity operator
 QUICK INSTALL
 ==============================================
 You can install ``optimusprimal`` from PyPi by running
+
 .. code-block:: bash
 
     pip install optimusprimal
