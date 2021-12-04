@@ -17,21 +17,22 @@ class l2_ball:
      data      - data that that centres the l2-ball
      Phi       - Measurement/Weighting operator
     """
+
     def __init__(self, epsilon, data, Phi=None):
 
         if np.any(epsilon <= 0):
             raise Exception("'epsilon' must be positive")
         self.epsilon = epsilon
         self.data = data
-        self.beta = 1.
-        if (Phi is None):
+        self.beta = 1.0
+        if Phi is None:
             self.Phi = linear_operators.identity()
         else:
             self.Phi = Phi
 
     def prox(self, x, gamma):
         xx = np.sqrt(np.sum(np.square(np.abs(x - self.data))))
-        if (xx < self.epsilon):
+        if xx < self.epsilon:
             p = x
         else:
             p = (x - self.data) * self.epsilon / xx + self.data
@@ -63,22 +64,25 @@ class l_inf_ball:
      data      - data that that centres the l2-ball
      Phi       - Measurement/Weighting operator
     """
+
     def __init__(self, epsilon, data, Phi=None):
 
         if np.any(epsilon <= 0):
             raise Exception("'epsilon' must be positive")
         self.epsilon = epsilon
         self.data = data
-        self.beta = 1.
-        if (Phi is None):
+        self.beta = 1.0
+        if Phi is None:
             self.Phi = linear_operators.identity()
         else:
             self.Phi = Phi
 
     def prox(self, x, gamma):
         z = x - self.data
-        return np.minimum(self.epsilon, np.abs(z)) * np.exp(
-            complex(0, 1) * np.angle(z)) + self.data
+        return (
+            np.minimum(self.epsilon, np.abs(z)) * np.exp(complex(0, 1) * np.angle(z))
+            + self.data
+        )
 
     def fun(self, x):
         return 0
@@ -104,22 +108,24 @@ class l1_norm:
      gamma     - regularization parameter
      Phi       - Measurement/Weighting operator
     """
+
     def __init__(self, gamma, Psi=None):
 
         if np.any(gamma <= 0):
             raise Exception("'gamma' must be positive")
 
         self.gamma = gamma
-        self.beta = 1.
+        self.beta = 1.0
 
-        if (Psi is None):
+        if Psi is None:
             self.Psi = linear_operators.identity()
         else:
             self.Psi = Psi
 
     def prox(self, x, tau):
-        return np.maximum(0, np.abs(x) - self.gamma * tau) * \
-            np.exp(complex(0, 1) * np.angle(x))
+        return np.maximum(0, np.abs(x) - self.gamma * tau) * np.exp(
+            complex(0, 1) * np.angle(x)
+        )
 
     def fun(self, x):
         return np.abs(self.gamma * x).sum()
@@ -145,24 +151,25 @@ class l2_square_norm:
      sigma     - regularization parameter
      Phi       - Measurement/Weighting operator
     """
+
     def __init__(self, sigma, Psi=None):
 
         if np.any(sigma <= 0):
             raise Exception("'gamma' must be positive")
 
         self.sigma = sigma
-        self.beta = 1.
+        self.beta = 1.0
 
-        if (Psi is None):
+        if Psi is None:
             self.Psi = linear_operators.identity()
         else:
             self.Psi = Psi
 
     def prox(self, x, tau):
-        return x / (tau / self.sigma**2 + 1.)
+        return x / (tau / self.sigma ** 2 + 1.0)
 
     def fun(self, x):
-        return np.sum(np.abs(x)**2 / (2. * self.sigma**2))
+        return np.sum(np.abs(x) ** 2 / (2.0 * self.sigma ** 2))
 
     def dir_op(self, x):
         return self.Psi.dir_op(x)
@@ -178,14 +185,15 @@ class positive_prox:
                         f(x) = (Re{x} >= 0) ? 0. : infty
     it returns the projection.
     """
+
     def __init__(self):
-        self.beta = 1.
+        self.beta = 1.0
 
     def prox(self, x, tau):
         return np.maximum(0, np.real(x))
 
     def fun(self, x):
-        return 0.
+        return 0.0
 
     def dir_op(self, x):
         return x
@@ -201,14 +209,15 @@ class real_prox:
                         f(x) = (Re{x} == x) ? 0. : infty
     it returns the projection.
     """
+
     def __init__(self):
-        self.beta = 1.
+        self.beta = 1.0
 
     def prox(self, x, tau):
         return np.real(x)
 
     def fun(self, x):
-        return 0.
+        return 0.0
 
     def dir_op(self, x):
         return x
@@ -223,8 +232,9 @@ class zero_prox:
                         f(x) = (0 == x) ? 0. : infty
     it returns the projection.
     """
+
     def __init__(self, indices, op, offset=0):
-        self.beta = 1.
+        self.beta = 1.0
         self.indices = indices
         self.op = op
         self.offset = offset
@@ -235,7 +245,7 @@ class zero_prox:
         return buff
 
     def fun(self, x):
-        return 0.
+        return 0.0
 
     def dir_op(self, x):
         return self.op.dir_op(x)
@@ -260,47 +270,74 @@ class poisson_loglike_ball:
      data      - data that that centres the ball
      Phi       - Measurement/Weighting operator
     """
+
     def __init__(self, epsilon, data, background, iters=20, Phi=None):
         if np.any(epsilon <= 0):
             raise Exception("'epsilon' must be positive")
         self.epsilon = epsilon
         self.data = data
         self.background = background
-        self.beta = 1.
-        if (Phi is None):
+        self.beta = 1.0
+        if Phi is None:
             self.Phi = linear_operators.identity()
         else:
             self.Phi = Phi
-        self.loglike = lambda x, mask: np.sum(x[mask] - self.data[
-            mask] - self.data[mask] * np.log(x[mask]) + self.data[mask] * np.
-                                              log(self.data[mask]))
+        self.loglike = lambda x, mask: np.sum(
+            x[mask]
+            - self.data[mask]
+            - self.data[mask] * np.log(x[mask])
+            + self.data[mask] * np.log(self.data[mask])
+        )
         # below are functions needed for newtons method to find the root for the prox
-        self.f = lambda x, delta, mask: self.loglike(
-            np.abs(x - delta + np.sqrt((x - delta)**2 + 4 * delta * self.data))
-            / 2., mask) - epsilon / 2.
-        self.df = lambda x, delta, mask: np.sum(
-            ((delta - x[mask] + 2 * self.data[mask]) / np.sqrt(
-                (x[mask] - delta)**2 + 4 * delta * self.data[mask]) - 1) *
-            (1 - 2 * self.data[mask] / (x[mask] - delta + np.sqrt(
-                (x[mask] - delta)**2 + 4 * delta * self.data[mask])))) / 2.
+        self.f = (
+            lambda x, delta, mask: self.loglike(
+                np.abs(x - delta + np.sqrt((x - delta) ** 2 + 4 * delta * self.data))
+                / 2.0,
+                mask,
+            )
+            - epsilon / 2.0
+        )
+        self.df = (
+            lambda x, delta, mask: np.sum(
+                (
+                    (delta - x[mask] + 2 * self.data[mask])
+                    / np.sqrt((x[mask] - delta) ** 2 + 4 * delta * self.data[mask])
+                    - 1
+                )
+                * (
+                    1
+                    - 2
+                    * self.data[mask]
+                    / (
+                        x[mask]
+                        - delta
+                        + np.sqrt((x[mask] - delta) ** 2 + 4 * delta * self.data[mask])
+                    )
+                )
+            )
+            / 2.0
+        )
         self.iters = iters
 
     def prox(self, x, gamma):
-        x_buff = (x + self.background)
+        x_buff = x + self.background
         mask = np.logical_and(self.data > 0, x_buff > 0)
         xx = self.loglike(x_buff, mask)
         p = x_buff * 0
-        if (xx <= self.epsilon / 2.):
+        if xx <= self.epsilon / 2.0:
             p = x
         else:
             # below we use the prox for h(x + b) is prox_h(x + b) - b
             delta = 0
             for i in range(self.iters):
-                delta = delta - self.f(x_buff, delta, mask) / \
-                    self.df(x_buff, delta, mask)
-            p[mask] = (x_buff[mask] - delta + np.sqrt(
-                (x_buff[mask] - delta)**2 +
-                4 * delta * self.data[mask])) / 2. - self.background[mask]
+                delta = delta - self.f(x_buff, delta, mask) / self.df(
+                    x_buff, delta, mask
+                )
+            p[mask] = (
+                x_buff[mask]
+                - delta
+                + np.sqrt((x_buff[mask] - delta) ** 2 + 4 * delta * self.data[mask])
+            ) / 2.0 - self.background[mask]
         return p
 
     def fun(self, x):
@@ -328,24 +365,29 @@ class poisson_loglike:
      data      - data that that centres the ball
      Phi       - Measurement/Weighting operator
     """
+
     def __init__(self, data, background, Phi=None):
 
         self.data = data
         self.background = background
-        self.beta = 1.
-        if (Phi is None):
+        self.beta = 1.0
+        if Phi is None:
             self.Phi = linear_operators.identity()
         else:
             self.Phi = Phi
 
     def prox(self, x, gamma):
-        return (x + self.background - gamma + np.sqrt(
-            (x + self.background - gamma)**2 +
-            4 * gamma * self.data)) / 2. - self.background
+        return (
+            x
+            + self.background
+            - gamma
+            + np.sqrt((x + self.background - gamma) ** 2 + 4 * gamma * self.data)
+        ) / 2.0 - self.background
 
     def fun(self, x):
-        return np.sum(x - self.data - self.data * np.log(x) +
-                      self.data * np.log(self.data))
+        return np.sum(
+            x - self.data - self.data * np.log(x) + self.data * np.log(self.data)
+        )
 
     def dir_op(self, x):
         return self.Phi.dir_op(x)
@@ -369,22 +411,23 @@ class l21_norm:
      data      - data that that centres the l2-ball
      Phi       - Measurement/Weighting operator
     """
+
     def __init__(self, tau, l2axis=0, Phi=None):
 
         if np.any(tau <= 0):
             raise Exception("'tau' must be positive")
         self.tau = tau
         self.l2axis = l2axis
-        self.beta = 1.
-        if (Phi is None):
+        self.beta = 1.0
+        if Phi is None:
             self.Phi = linear_operators.identity()
         else:
             self.Phi = Phi
 
     def prox(self, x, gamma):
         xx = np.expand_dims(
-            np.sqrt(np.sum(np.square(np.abs(x)), axis=self.l2axis)),
-            self.l2axis)
+            np.sqrt(np.sum(np.square(np.abs(x)), axis=self.l2axis)), self.l2axis
+        )
         return x * (1 - self.tau * gamma / np.maximum(xx, self.tau * gamma))
 
     def fun(self, x):

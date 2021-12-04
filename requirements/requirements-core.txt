@@ -1,0 +1,9 @@
+# Core packages
+numpy 
+scipy
+PyWavelets
+
+# Formatting pacakges
+black 
+
+

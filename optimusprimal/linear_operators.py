@@ -3,7 +3,7 @@ import pywt
 import logging
 import scipy.fft
 
-logger = logging.getLogger('Optimus Primal')
+logger = logging.getLogger("Optimus Primal")
 
 
 def power_method(op, x_init, tol=1e-3, iters=1000):
@@ -17,19 +17,25 @@ def power_method(op, x_init, tol=1e-3, iters=1000):
         if np.abs(val_new - val_old) < tol * val_old:
             logger.info(
                 "[Power Method] Converged with norm= %s, iter = %s, tol = %s",
-                val_new, i,
-                np.abs(val_new - val_old) / np.abs(val_old))
+                val_new,
+                i,
+                np.abs(val_new - val_old) / np.abs(val_old),
+            )
             break
         x_old = x_new / val_new
         val_old = val_new
-        if (i % 10 == True):
-            logger.info("[Power Method] iter = %s, tol = %s", i,
-                        np.abs(val_new - val_old) / np.abs(val_old))
+        if i % 10 == True:
+            logger.info(
+                "[Power Method] iter = %s, tol = %s",
+                i,
+                np.abs(val_new - val_old) / np.abs(val_old),
+            )
     return val_new, x_new
 
 
 class identity:
     """Identity operator."""
+
     def dir_op(self, x):
         return x
 
@@ -39,6 +45,7 @@ class identity:
 
 class projection:
     """Projection wrapper for linear operator"""
+
     def __init__(self, linear_op, index, shape):
         self.linear_op = linear_op
         self.shape = shape
@@ -55,6 +62,7 @@ class projection:
 
 class sum:
     """Sum wrapper for linear operator"""
+
     def __init__(self, linear_op, shape):
         self.linear_op = linear_op
         self.shape = shape
@@ -70,6 +78,7 @@ class sum:
 
 class weights:
     """weights wrapper for linear operator"""
+
     def __init__(self, linear_op, weights):
         self.linear_op = linear_op
         self.weights = weights
@@ -89,6 +98,7 @@ class function_wrapper:
     dir_op  - forward operator
     adj_op  - adjoint operator
     """
+
     dir_op = None
     adj_op = None
 
@@ -99,6 +109,7 @@ class function_wrapper:
 
 class fft_operator:
     """Applies nd fft operator to nd signal."""
+
     def __init__(self):
         self.dir_op = np.fft.fftn
         self.adj_op = np.fft.ifftn
@@ -106,11 +117,12 @@ class fft_operator:
 
 class dct_operator:
     """Applies nd discrete cosine transform to nd signal"""
+
     def dir_op(self, x):
-        return scipy.fft.dctn(x, norm='ortho')
+        return scipy.fft.dctn(x, norm="ortho")
 
     def adj_op(self, x):
-        return scipy.fft.idctn(x, norm='ortho')
+        return scipy.fft.idctn(x, norm="ortho")
 
 
 class diag_matrix_operator:
@@ -121,6 +133,7 @@ class diag_matrix_operator:
     ========
     W - array of weights
     """
+
     def __init__(self, W):
         self.W = W
 
@@ -139,6 +152,7 @@ class matrix_operator:
     ========
     A - numpy matrix
     """
+
     def __init__(self, A):
         self.A = A
         self.A_H = np.conj(A.T)
@@ -167,42 +181,39 @@ class db_wavelets:
         self.adj_op(self.dir_op(np.ones(shape)))
 
     def dir_op(self, x):
-        if (self.wav == 'dirac'):
+        if self.wav == "dirac":
             return np.ravel(x)
-        if (self.wav == 'fourier'):
+        if self.wav == "fourier":
             return np.ravel(np.fft.fftn(x))
-        if (self.wav == "dct"):
-            return np.ravel(scipy.fft.dctn(x, norm='ortho'))
-        if (self.shape[0] % 2 == 1):
+        if self.wav == "dct":
+            return np.ravel(scipy.fft.dctn(x, norm="ortho"))
+        if self.shape[0] % 2 == 1:
             raise Exception("Signal shape should be even dimensions.")
-        if (len(self.shape) > 1):
-            if (self.shape[1] % 2 == 1):
+        if len(self.shape) > 1:
+            if self.shape[1] % 2 == 1:
                 raise Exception("Signal shape should be even dimensions.")
 
-        coeffs = pywt.wavedecn(x,
-                               wavelet=self.wav,
-                               level=self.levels,
-                               mode='periodic',
-                               axes=self.axes)
+        coeffs = pywt.wavedecn(
+            x, wavelet=self.wav, level=self.levels, mode="periodic", axes=self.axes
+        )
         arr, self.coeff_slices, self.coeff_shapes = pywt.ravel_coeffs(
-            coeffs, axes=self.axes)
+            coeffs, axes=self.axes
+        )
         return arr
 
     def adj_op(self, x):
-        if (self.wav == 'dirac'):
+        if self.wav == "dirac":
             return np.reshape(x, self.shape)
-        if (self.wav == 'fourier'):
+        if self.wav == "fourier":
             return np.fft.ifftn(np.reshape(x, self.shape))
-        if (self.wav == "dct"):
-            return scipy.fft.idctn(np.reshape(x, self.shape), norm='ortho')
-        coeffs_from_arr = pywt.unravel_coeffs(x,
-                                              self.coeff_slices,
-                                              self.coeff_shapes,
-                                              output_format='wavedecn')
-        return pywt.waverecn(coeffs_from_arr,
-                             wavelet=self.wav,
-                             mode='periodic',
-                             axes=self.axes)
+        if self.wav == "dct":
+            return scipy.fft.idctn(np.reshape(x, self.shape), norm="ortho")
+        coeffs_from_arr = pywt.unravel_coeffs(
+            x, self.coeff_slices, self.coeff_shapes, output_format="wavedecn"
+        )
+        return pywt.waverecn(
+            coeffs_from_arr, wavelet=self.wav, mode="periodic", axes=self.axes
+        )
 
 
 class dictionary:
@@ -213,15 +224,14 @@ class dictionary:
 
         self.wavelet_list = []
         self.sizes = np.zeros(len(wav))
-        if (axes is None):
+        if axes is None:
             axes = []
             for i in range(len(wav)):
                 axes.append(range(len(shape)))
-        if (np.isscalar(levels)):
+        if np.isscalar(levels):
             levels = np.ones(len(wav)) * levels
         for i in range(len(wav)):
-            self.wavelet_list.append(
-                db_wavelets(wav[i], levels[i], shape, axes[i]))
+            self.wavelet_list.append(db_wavelets(wav[i], levels[i], shape, axes[i]))
 
     def dir_op(self, x):
         out = self.wavelet_list[0].dir_op(x)
@@ -237,7 +247,7 @@ class dictionary:
         out = 0
         for wav_i in range(len(self.wavelet_list)):
             size = self.sizes[wav_i]
-            x_block = x[int(offset):int(offset + size)]
+            x_block = x[int(offset) : int(offset + size)]
             buff = self.wavelet_list[wav_i].adj_op(x_block)
             out += buff / np.sqrt(len(self.wavelet_list))
             offset += size

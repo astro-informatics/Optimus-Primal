@@ -3,17 +3,10 @@ import logging
 import numpy as np
 import time
 
-logger = logging.getLogger('Optimus Primal')
+logger = logging.getLogger("Optimus Primal")
 
 
-def FBPD(x_init,
-         options=None,
-         g=None,
-         f=None,
-         h=None,
-         p=None,
-         r=None,
-         viewer=None):
+def FBPD(x_init, options=None, g=None, f=None, h=None, p=None, r=None, viewer=None):
     if f is None:
         f = Empty.EmptyProx()
     if g is None:
@@ -25,23 +18,15 @@ def FBPD(x_init,
     if r is None:
         r = Empty.EmptyProx()
     x = x_init
-    y = h.dir_op(x) * 0.
+    y = h.dir_op(x) * 0.0
     z = p.dir_op(x) * 0
     w = r.dir_op(x) * 0
     return FBPD_warm_start(x_init, y, z, w, options, g, f, h, p, r, viewer)
 
 
-def FBPD_warm_start(x_init,
-                    y,
-                    z,
-                    w,
-                    options=None,
-                    g=None,
-                    f=None,
-                    h=None,
-                    p=None,
-                    r=None,
-                    viewer=None):
+def FBPD_warm_start(
+    x_init, y, z, w, options=None, g=None, f=None, h=None, p=None, r=None, viewer=None
+):
     """Takes in an input signal with proximal operators and a gradient operator
     and returns a solution with diagnostics."""
     # default inputs
@@ -56,28 +41,23 @@ def FBPD_warm_start(x_init,
     if r is None:
         r = Empty.EmptyProx()
     if options is None:
-        options = {
-            'tol': 1e-4,
-            'iter': 500,
-            'update_iter': 100,
-            'record_iters': False
-        }
+        options = {"tol": 1e-4, "iter": 500, "update_iter": 100, "record_iters": False}
 
     # checking minimum requrements for inputs
-    assert hasattr(f, 'prox')
-    assert hasattr(h, 'prox')
-    assert hasattr(h, 'dir_op')
-    assert hasattr(h, 'adj_op')
-    assert hasattr(p, 'prox')
-    assert hasattr(p, 'dir_op')
-    assert hasattr(p, 'adj_op')
-    assert hasattr(g, 'grad')
+    assert hasattr(f, "prox")
+    assert hasattr(h, "prox")
+    assert hasattr(h, "dir_op")
+    assert hasattr(h, "adj_op")
+    assert hasattr(p, "prox")
+    assert hasattr(p, "dir_op")
+    assert hasattr(p, "adj_op")
+    assert hasattr(g, "grad")
 
     # algorithmic parameters
-    tol = options['tol']
-    max_iter = options['iter']
-    update_iter = options['update_iter']
-    record_iters = options['record_iters']
+    tol = options["tol"]
+    max_iter = options["iter"]
+    update_iter = options["update_iter"]
+    record_iters = options["record_iters"]
     # step-sizes
     tau = 1 / (g.beta + 2)
     sigmah = (1 / tau - g.beta / 2) / (h.beta + p.beta + r.beta)
@@ -86,7 +66,7 @@ def FBPD_warm_start(x_init,
     # initialization
     x = np.copy(x_init)
 
-    logger.info('Running Forward Backward Primal Dual')
+    logger.info("Running Forward Backward Primal Dual")
     timing = np.zeros(max_iter)
     criter = np.zeros(max_iter)
 
@@ -100,47 +80,58 @@ def FBPD_warm_start(x_init,
         x = f.prox(x, tau)
         # dual forward-backward step
         y = y + sigmah * h.dir_op(2 * x - x_old)
-        y = y - sigmah * h.prox(y / sigmah, 1. / sigmah)
+        y = y - sigmah * h.prox(y / sigmah, 1.0 / sigmah)
 
         z = z + sigmap * p.dir_op(2 * x - x_old)
-        z = z - sigmap * p.prox(z / sigmap, 1. / sigmap)
+        z = z - sigmap * p.prox(z / sigmap, 1.0 / sigmap)
 
         w = w + sigmar * r.dir_op(2 * x - x_old)
-        w = w - sigmar * r.prox(w / sigmar, 1. / sigmar)
+        w = w - sigmar * r.prox(w / sigmar, 1.0 / sigmar)
         # time and criterion
-        if (record_iters):
+        if record_iters:
             timing[it] = time.time() - t
-            criter[it] = f.fun(x) + g.fun(x) + \
-                h.fun(h.dir_op(x)) + p.fun(p.dir_op(x)) + r.fun(r.dir_op(x))
+            criter[it] = (
+                f.fun(x)
+                + g.fun(x)
+                + h.fun(h.dir_op(x))
+                + p.fun(p.dir_op(x))
+                + r.fun(r.dir_op(x))
+            )
 
         if np.allclose(x, 0):
             x = x_old
-            logger.info('[Primal Dual] converged to 0 in %d iterations', it)
+            logger.info("[Primal Dual] converged to 0 in %d iterations", it)
             break
         # stopping rule
         if np.linalg.norm(x - x_old) < tol * np.linalg.norm(x_old) and it > 10:
-            logger.info('[Primal Dual] converged in %d iterations', it)
+            logger.info("[Primal Dual] converged in %d iterations", it)
             break
-        if (update_iter >= 0):
-            if (it % update_iter == 0):
-                logger.info('[Primal Dual] %d out of %d iterations, tol = %f',
-                            it, max_iter,
-                            np.linalg.norm(x - x_old) / np.linalg.norm(x_old))
+        if update_iter >= 0:
+            if it % update_iter == 0:
+                logger.info(
+                    "[Primal Dual] %d out of %d iterations, tol = %f",
+                    it,
+                    max_iter,
+                    np.linalg.norm(x - x_old) / np.linalg.norm(x_old),
+                )
                 if viewer is not None:
                     viewer(x, it)
-        logger.debug('[Primal Dual] %d out of %d iterations, tol = %f', it,
-                     max_iter,
-                     np.linalg.norm(x - x_old) / np.linalg.norm(x_old))
+        logger.debug(
+            "[Primal Dual] %d out of %d iterations, tol = %f",
+            it,
+            max_iter,
+            np.linalg.norm(x - x_old) / np.linalg.norm(x_old),
+        )
 
-    criter = criter[0:it + 1]
-    timing = np.cumsum(timing[0:it + 1])
+    criter = criter[0 : it + 1]
+    timing = np.cumsum(timing[0 : it + 1])
     solution = x
     diagnostics = {
-        'max_iter': it,
-        'times': timing,
-        'Obj_vals': criter,
-        'z': z,
-        'y': y,
-        'w': w
+        "max_iter": it,
+        "times": timing,
+        "Obj_vals": criter,
+        "z": z,
+        "y": y,
+        "w": w,
     }
     return solution, diagnostics

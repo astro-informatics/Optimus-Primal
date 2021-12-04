@@ -1,22 +1,52 @@
-import setuptools
+import os
+import shutil
+from setuptools import setup
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+import numpy
 
-setuptools.setup(
-    name="optimusprimal",
-    version="0.0.1",
-    author="Luke Pratley",
-    author_email="luke.pratley@gmail.com",
-    description="Convex Optimization Primal Dual Solver",
+# clean previous build
+for root, dirs, files in os.walk("./optimusprimal/", topdown=False):
+    for name in dirs:
+        if (name == "build"):
+            shutil.rmtree(name)
+
+from os import path
+this_directory = path.abspath(path.dirname(__file__))
+
+def read_requirements(file):
+    with open(file) as f:
+        return f.read().splitlines()
+
+def read_file(file):
+   with open(file) as f:
+        return f.read()
+
+long_description = read_file(".pip_readme.rst")
+required = read_requirements("requirements/requirements-core.txt")
+
+include_dirs = [numpy.get_include(),]
+
+extra_link_args=[]
+
+setup(
+    classifiers=['Programming Language :: Python :: 3.6',
+                 'Programming Language :: Python :: 3.7',
+                 'Programming Language :: Python :: 3.8',
+                 'Operating System :: OS Independent',
+                 'Intended Audience :: Developers',
+                 'Intended Audience :: Science/Research'
+                 ],
+    name = "optimusprimal",
+    version = "0.0.2",
+    prefix='.',
+    url='https://github.com/astro-informatics/Optimus-Primal',
+    author='Luke Pratley & Matthjis Mars & Matthew Price & Contributors',
+    author_email='luke.pratley@gmail.com',
+    license='GNU General Public License v3 (GPLv3)',
+    install_requires=required,
+    description='Convex Optimization Primal Dual Solver',
+    long_description_content_type = "text/x-rst",
     long_description=long_description,
-    long_description_content_type="text/markdown",
-    url="https://github.com/Luke-Pratley/optimusprimal",
-    packages=setuptools.find_packages(),
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-        "Operating System :: OS Independent",
-    ],
-    python_requires='>=3.6',
-    install_requires=['numpy', 'scipy', 'PyWavelets'])
+    packages=['optimusprimal']
+)
+

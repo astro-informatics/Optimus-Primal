@@ -1,0 +1,5 @@
+# Testing packages
+pytest
+pytest-black
+pytest-cov
+codecov
