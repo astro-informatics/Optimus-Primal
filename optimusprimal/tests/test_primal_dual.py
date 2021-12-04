@@ -92,5 +92,5 @@ def test_l1_unconstrained_fb():
     h = prox_operators.l1_norm(gamma * sigma ** 2, psi)
     solution = h.prox(y, 1)
     assert diag["max_iter"] < 500
-    assert np.isclose(z, z_fb, 1e-3).all()
-    assert np.isclose(z, solution, 1e-3).all()
+    assert np.isclose(z, z_fb.real(), 1e-3).all()
+    assert np.isclose(z, solution.real(), 1e-3).all()
