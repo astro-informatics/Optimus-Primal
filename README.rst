@@ -3,8 +3,8 @@ Optimus-Primal: Lightweight primal-dual solver
 
 .. image:: https://img.shields.io/badge/GitHub-optimusprimal-brightgreen.svg?style=flat
     :target: https://github.com/astro-informatics/Optimus-Primal
-.. image:: https://app.travis-ci.com/Luke-Pratley/Optimus-Primal.svg?branch=master
-    :target: https://app.travis-ci.com/Luke-Pratley/Optimus-Primal
+.. image:: https://github.com/astro-informatics/Optimus-Primal/actions/workflows/python.yml/badge.svg
+    :target: https://github.com/astro-informatics/Optimus-Primal/actions/workflows/python.yml
 .. image:: https://codecov.io/gh/Luke-Pratley/Optimus-Primal/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/Luke-Pratley/Optimus-Primal
 .. image:: https://img.shields.io/badge/License-GPL-blue.svg
