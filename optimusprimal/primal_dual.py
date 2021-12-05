@@ -7,6 +7,19 @@ logger = logging.getLogger("Optimus Primal")
 
 
 def FBPD(x_init, options=None, g=None, f=None, h=None, p=None, r=None, viewer=None):
+    """Evaluates the Primal dual forward backward optimization
+
+    Args:
+
+        x_init (np.ndarray): First estimate solution
+        options (dict): Python dictionary of optimisation configuration parameters
+        g (Grad Class): Unconstrained data-fidelity class
+        f (Prox Class): Constrained data-fidelity class
+        h (Prox Class): Proximal regularisation constraint
+        p (Prox Class): Positivity constraint
+        r (Prox Class): Reality constraint
+        viewer (function): Plotting function for real-time viewing (must accept: x, iteration)
+    """
     if f is None:
         f = Empty.EmptyProx()
     if g is None:
@@ -27,8 +40,22 @@ def FBPD(x_init, options=None, g=None, f=None, h=None, p=None, r=None, viewer=No
 def FBPD_warm_start(
     x_init, y, z, w, options=None, g=None, f=None, h=None, p=None, r=None, viewer=None
 ):
-    """Takes in an input signal with proximal operators and a gradient operator
-    and returns a solution with diagnostics."""
+    """Evaluates the Primal dual forward backward optimization with warm-start
+
+    Args:
+
+        x_init (np.ndarray): First estimate solution
+        y (np.ndarray): First simulation from `h class'
+        z (np.ndarray): First simulation from `p class'
+        w (np.ndarray): First simulation from `r class'
+        options (dict): Python dictionary of optimisation configuration parameters
+        g (Grad Class): Unconstrained data-fidelity class
+        f (Prox Class): Constrained data-fidelity class
+        h (Prox Class): Proximal regularisation constraint
+        p (Prox Class): Positivity constraint
+        r (Prox Class): Reality constraint
+        viewer (function): Plotting function for real-time viewing (must accept: x, iteration)
+    """
     # default inputs
     if f is None:
         f = Empty.EmptyProx()

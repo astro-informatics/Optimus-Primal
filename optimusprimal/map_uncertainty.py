@@ -5,7 +5,19 @@ logger = logging.getLogger("Optimus Primal")
 
 
 def bisection_method(function, start_interval, iters, tol):
-    """Bisection method for finding credible interval."""
+    """Bisection method for locating minima of an abstract function
+
+    Args:
+
+        function (function): Loss function to bisect
+        start_interval (list[int]): Initial lower and upper bounds
+        iters (int): Maximum number of bisection iterations
+        tol (double): Convergence tolerance of iterations
+
+    Returns:
+
+        Argument at which loss function is bisected
+    """
 
     eta1 = start_interval[0]
     eta2 = start_interval[1]
@@ -34,7 +46,23 @@ def bisection_method(function, start_interval, iters, tol):
 def create_local_credible_interval(
     x_sol, region_size, function, bound, iters, tol, bottom, top
 ):
-    """Bisection method for finding credible interval."""
+    """Bisection method for finding credible intervals
+
+    Args:
+
+        x_sol (np.ndarray): Maximum a posteriori solution
+        region_size (int): Super-pixel dimension
+        function (function): Loss function to bisect
+        bound (double): Level-set threshold at alpha % confidence
+        iters (int): Maximum number of bisection iterations
+        tol (double): Convergence tolerance of iterations
+        bottom (double): lower bound on credible interval
+        top (double): upper bound on credible interval
+
+    Returns:
+
+        Upper limit, lower limit, super-pixel mean
+    """
 
     region = np.zeros(x_sol.shape)
     logger.info("Calculating credible interval for %s superpxiels.", region.shape)
@@ -106,7 +134,25 @@ def create_local_credible_interval(
 def create_local_credible_interval_fast(
     x_sol, phi, psi, region_size, function, bound, iters, tol, bottom, top
 ):
-    """Bisection method for finding credible interval."""
+    """Bisection method for finding credible intervals exploiting linearity
+
+    Args:
+
+        x_sol (np.ndarray): Maximum a posteriori solution
+        phi (Linear operator): Sensing operator
+        psi (Linear operator): Regularising operator (typically wavelets)
+        region_size (int): Super-pixel dimension
+        function (function): Loss function to bisect
+        bound (double): Level-set threshold at alpha % confidence
+        iters (int): Maximum number of bisection iterations
+        tol (double): Convergence tolerance of iterations
+        bottom (double): lower bound on credible interval
+        top (double): upper bound on credible interval
+
+    Returns:
+
+        Upper limit, lower limit, super-pixel mean
+    """
 
     region = np.zeros(x_sol.shape)
     logger.info("Calculating credible interval for %s superpxiels.", region.shape)
@@ -186,31 +232,31 @@ def create_local_credible_interval_fast(
     return error_p, error_m, mean
 
 
-def create_superpixel_map(x_sol, region_size):
-    """Bisection method for finding credible interval."""
+# def create_superpixel_map(x_sol, region_size):
+#     """Bisection method for finding credible interval."""
 
-    region = np.zeros(x_sol.shape)
-    if len(x_sol.shape) > 1:
-        region[:region_size, :region_size] = 1.0
-        dsizey, dsizex = int(x_sol.shape[0] / region_size), int(
-            x_sol.shape[1] / region_size
-        )
-        mean = np.zeros((dsizey, dsizex))
-        for i in range(dsizey):
-            for j in range(dsizex):
-                mask = np.roll(
-                    np.roll(region, shift=i * region_size, axis=0),
-                    shift=j * region_size,
-                    axis=1,
-                )
-                x_sum = np.nansum(np.ravel(x_sol[(mask.astype(bool))]))
-                mean[i, j] = x_sum
-    else:
-        region[:region_size] = 1.0
-        dsizey = int(x_sol.shape[0] / region_size)
-        mean = np.zeros((dsizey))
-        for i in range(dsizey):
-            mask = np.roll(region, shift=i * region_size, axis=0)
-            x_sum = np.nansum(np.ravel(x_sol[(mask.astype(bool))]))
-            mean[i] = x_sum
-    return mean
+#     region = np.zeros(x_sol.shape)
+#     if len(x_sol.shape) > 1:
+#         region[:region_size, :region_size] = 1.0
+#         dsizey, dsizex = int(x_sol.shape[0] / region_size), int(
+#             x_sol.shape[1] / region_size
+#         )
+#         mean = np.zeros((dsizey, dsizex))
+#         for i in range(dsizey):
+#             for j in range(dsizex):
+#                 mask = np.roll(
+#                     np.roll(region, shift=i * region_size, axis=0),
+#                     shift=j * region_size,
+#                     axis=1,
+#                 )
+#                 x_sum = np.nansum(np.ravel(x_sol[(mask.astype(bool))]))
+#                 mean[i, j] = x_sum
+#     else:
+#         region[:region_size] = 1.0
+#         dsizey = int(x_sol.shape[0] / region_size)
+#         mean = np.zeros((dsizey))
+#         for i in range(dsizey):
+#             mask = np.roll(region, shift=i * region_size, axis=0)
+#             x_sum = np.nansum(np.ravel(x_sol[(mask.astype(bool))]))
+#             mean[i] = x_sum
+#     return mean
