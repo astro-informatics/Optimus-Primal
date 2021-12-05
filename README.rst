@@ -11,8 +11,8 @@
 .. image:: http://img.shields.io/badge/arXiv-XXXX.XXXX-orange.svg?style=flat
     :target: https://arxiv.org/abs/XXXX.XXXX
 
-|logo| Lightweight primal-dual solver
-==========================================
+|logo| Optimus-Primal: A Lightweight primal-dual solver
+=======================================================
 
 .. |logo| image:: /docs/assets/logo2.png
     :width: 200
