@@ -116,3 +116,74 @@ def test_wav_op():
     out = op.adj_op(inp)
     adjoint_operator(op, inp, out)
     buff1 = op.adj_op(op.dir_op(out))
+
+
+def test_db_wavelets_errors():
+    with pytest.raises(ValueError):
+        linear_operators.db_wavelets(wav="db1", levels=0, shape=(10, 10))
+
+    with pytest.raises(ValueError):
+        linear_operators.db_wavelets(wav="db1", levels=1, shape=(9, 10))
+
+    with pytest.raises(ValueError):
+        linear_operators.db_wavelets(wav="db1", levels=1, shape=(10, 9))
+
+
+def test_dctn_operator():
+    x = np.random.randn(10, 10)
+    op = linear_operators.dct_operator()
+    xx = op.dir_op(x)
+    xx = op.adj_op(xx)
+    assert np.allclose(x, xx, 1e-6)
+
+
+def test_fft_operator():
+    x = np.random.randn(10, 10)
+    op = linear_operators.fft_operator()
+    xx = op.dir_op(x)
+    xx = op.adj_op(xx)
+    assert np.allclose(x, xx, 1e-6)
+
+
+def test_weights_wrapper():
+    weights = np.random.randn(10, 10)
+    x = np.random.randn(10, 10)
+    inp_op = linear_operators.fft_operator()
+    w_op = linear_operators.weights(inp_op, weights)
+
+    assert np.allclose(inp_op.dir_op(x) * weights, w_op.dir_op(x), 1e-6)
+    assert np.allclose(inp_op.adj_op(x * np.conj(weights)), w_op.adj_op(x), 1e-6)
+
+
+def test_function_wrapper():
+    x = np.random.randn(10, 10)
+    inp_op = linear_operators.fft_operator()
+    op_wrap = linear_operators.function_wrapper(inp_op.dir_op, inp_op.adj_op)
+
+    assert np.allclose(inp_op.dir_op(x), op_wrap.dir_op(x), 1e-6)
+    assert np.allclose(inp_op.adj_op(x), op_wrap.adj_op(x), 1e-6)
+
+
+def test_sum_wrapper():
+    x = np.random.randn(10, 10)
+    xx = np.random.randn(10)
+    s = x.shape
+    inp_op = linear_operators.identity()
+    sum_op = linear_operators.sum(inp_op, s)
+
+    temp = np.zeros_like(x)
+    temp[:, ...] = inp_op.adj_op(xx)
+    assert np.allclose(inp_op.dir_op(np.sum(x, axis=0)), sum_op.dir_op(x), 1e-6)
+    assert np.allclose(temp, np.real(sum_op.adj_op(xx)), 1e-6)
+
+
+def test_projection_wrapper():
+    x = np.random.randn(10, 10)
+    xx = x[1, ...]
+    inp_op = linear_operators.identity()
+    proj_wrap = linear_operators.projection(inp_op, index=1, shape=x.shape)
+
+    temp = np.zeros_like(x)
+    temp[1, ...] = inp_op.adj_op(xx)
+    assert np.allclose(inp_op.dir_op(x[1, ...]), proj_wrap.dir_op(x), 1e-6)
+    assert np.allclose(temp, np.real(proj_wrap.adj_op(xx)), 1e-6)

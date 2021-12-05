@@ -1,3 +1,4 @@
+from typing import get_args
 import optimusprimal.prox_operators as prox_operators
 import optimusprimal.linear_operators as linear_operators
 import pytest
@@ -177,3 +178,40 @@ def test_translate_prox():
     xx = op.adj_op(inp)
     assert np.allclose(x, xx, 1e-10)
     assert np.allclose(x, inp, 1e-10)
+
+
+def test_poisson_loglike_ball():
+    epsilon = 1.0
+    inp = np.abs(np.random.normal(0, 10.0, (10, 10)))
+    op = prox_operators.poisson_loglike_ball(epsilon, inp, inp, Phi=None)
+    assert op.fun(inp) == pytest.approx(0.0)
+
+    op.prox(inp, 1)
+    op = prox_operators.poisson_loglike_ball(
+        epsilon, inp, inp, Phi=linear_operators.identity()
+    )
+    assert np.allclose(op.dir_op(inp), op.adj_op(inp), 1e-6)
+
+
+def test_poisson_loglike_ball_errors():
+    with pytest.raises(ValueError):
+        prox_operators.poisson_loglike_ball(epsilon=0, data=None, background=None)
+
+
+def test_poisson_loglike():
+    inp = np.abs(np.random.normal(0, 10.0, (10, 10)))
+    op = prox_operators.poisson_loglike(inp, inp, Phi=None)
+    gamma = 1
+    out = (
+        inp + inp - gamma + np.sqrt((inp + inp - gamma) ** 2 + 4 * gamma * inp)
+    ) / 2.0 - inp
+    assert op.fun(inp) == pytest.approx(0.0)
+    assert np.allclose(op.prox(inp, gamma), out, 1e-6)
+
+    op = prox_operators.poisson_loglike(inp, inp, Phi=linear_operators.identity())
+    assert np.allclose(op.dir_op(inp), op.adj_op(inp), 1e-6)
+
+
+def test_poisson_loglike_errors():
+    with pytest.raises(ValueError):
+        prox_operators.poisson_loglike_ball(epsilon=0, data=None, background=None)
