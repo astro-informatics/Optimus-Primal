@@ -14,7 +14,7 @@
 |logo| Optimus-Primal: A Lightweight primal-dual solver
 =======================================================
 
-.. |logo| image:: /docs/assets/logo2.png
+.. |logo| image:: /docs/assets/random_logo.png
     :width: 200
 
 
