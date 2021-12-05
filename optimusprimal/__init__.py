@@ -4,7 +4,7 @@ import sys
 from . import grad_operators
 from . import linear_operators
 from . import map_uncertainty
-from . import primal_dual 
+from . import primal_dual
 from . import prox_operators
 from . import Empty
 
