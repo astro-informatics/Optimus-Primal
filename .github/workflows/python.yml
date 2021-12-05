@@ -24,7 +24,6 @@ jobs:
     
     - name: Run tests
       run: |
-        pytest --black optimusprimal/tests/
         pytest --cov-report term --cov=optimusprimal --cov-config=.coveragerc 
         codecov --token ffd4ea85-b6c6-44e8-939b-fe79f4865ff1
 
