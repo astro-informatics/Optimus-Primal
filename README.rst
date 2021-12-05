@@ -11,13 +11,11 @@
 .. image:: http://img.shields.io/badge/arXiv-XXXX.XXXX-orange.svg?style=flat
     :target: https://arxiv.org/abs/XXXX.XXXX
 
-********************************************************
 |logo| Optimus-Primal: A Lightweight primal-dual solver
-********************************************************
+========================================================
 
 .. |logo| image:: /docs/assets/animated_logo.png
-    :width: 50
-
+    :width: 40
 
 ``optimusprimal`` is a light weight proximal splitting Forward Backward Primal Dual based solver for convex optimization problems. 
 The current version supports finding the minimum of f(x) + h(A x) + p(B x) + g(x), where f, h, and p are lower semi continuous and have proximal operators, and g is differentiable. A and B are linear operators.
@@ -40,18 +38,47 @@ Alternatively, you can install ``optimusprimal`` from GitHub by first cloning th
     git clone git@github.com:astro-informatics/Optimus-Primal.git
     cd Optimus-Primal
 
-and running the build script 
+and running the build script and run install tests by
 
 .. code-block:: bash 
 
     bash build_optimusprimal.sh 
+    pytest --black optimusprimal/tests/
 
-Following which unit tests can be run 
+BASIC USAGE
+==============================================
+First you will need to install ``optimusprimal`` PyPi by running
 
 .. code-block:: bash
 
-    pytest --black optimusprimal/tests/
+    pip install optimusprimal
 
+After installing ``optimusprimal`` one can *e.g.* perform an constrained proximal primal dual reconstruction by
+
+.. code-block:: python 
+
+    import numpy as np 
+    import optimusprimal.primal_dual as primal_dual
+    import optimusprimal.linear_operators as linear_ops 
+    import optimusprimal.prox_operators as prox_ops 
+
+    options = {'tol': 1e-5, 'iter': 5000, 'update_iter': 50, 'record_iters': False}
+
+    # Load some data
+    y = np.load('Some observed signal y')                                 # Load a file of observed data.
+    epsilon = sigma * np.sqrt(y.size + 2 np.sqrt(y.size))                 # where sigma is your noise std.
+
+    # Define a forward model i.e. y = M(x) + n
+    M = np.ones_like(y)                                                   # Here M = Identity for simplicity.
+    p = prox_ops.l2_ball(epsilon, y, linear_ops.diag_matrix_operator(M))  # Create a l2-ball data-fidelity.
+
+    # Define a regularisation i.e. ||W(x)||_1
+    wav = ['db1', 'db3', 'db4']                                           # Select some wavelet dictionaries.
+    psi = linear_operators.dictionary(wav, levels=6, y.shape)             # Define multi-dictionary wavelets.
+    h = prox_ops.l1_norm(gamma=1, psi)                                    # Create an l1-norm regulariser.
+
+    # Recover an estiamte i.e. x_est = min[h(x)] s.t. p(x) <= epsilon
+    x_est, = primal_dual.FBPD(y, options, None, None, h, p, None)         # Recover an estimate of x.
 
 CONTRIBUTORS
 ==============================================
