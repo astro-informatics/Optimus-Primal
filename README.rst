@@ -11,11 +11,8 @@
 .. image:: http://img.shields.io/badge/arXiv-XXXX.XXXX-orange.svg?style=flat
     :target: https://arxiv.org/abs/XXXX.XXXX
 
-|logo|
-======
-
-.. |logo| image:: /docs/assets/logo2.png
-    :width: 400
+.. image:: /docs/assets/logo2.png
+    :width: 450
     :align: center
 
 ``optimusprimal`` is a light weight proximal splitting Forward Backward Primal Dual based solver for convex optimization problems. 
