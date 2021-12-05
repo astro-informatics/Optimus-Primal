@@ -28,9 +28,9 @@ jobs:
         pytest --cov-report term --cov=optimusprimal --cov-config=.coveragerc 
         codecov --token ffd4ea85-b6c6-44e8-939b-fe79f4865ff1
 
-#     - name: Build Documentation
-#       run: |
-#         cd docs && make html
+    - name: Build Documentation
+      run: |
+        cd docs && make html
 
 #     - name: Deploy
 #       if: github.ref == 'refs/heads/master'
