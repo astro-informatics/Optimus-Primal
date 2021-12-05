@@ -47,12 +47,6 @@ and running the build script and run install tests by
 
 BASIC USAGE
 ==============================================
-First you will need to install ``optimusprimal`` PyPi by running
-
-.. code-block:: bash
-
-    pip install optimusprimal
-
 After installing ``optimusprimal`` one can *e.g.* perform an constrained proximal primal dual reconstruction by
 
 .. code-block:: python 
