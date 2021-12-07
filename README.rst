@@ -8,8 +8,6 @@
     :target: https://badge.fury.io/py/optimusprimal
 .. image:: https://img.shields.io/badge/License-GPL-blue.svg
     :target: http://perso.crans.org/besson/LICENSE.html
-.. image:: http://img.shields.io/badge/arXiv-XXXX.XXXX-orange.svg?style=flat
-    :target: https://arxiv.org/abs/XXXX.XXXX
 
 |logo| Optimus-Primal: A Lightweight primal-dual solver
 ========================================================

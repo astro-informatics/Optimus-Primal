@@ -1,4 +1,4 @@
-|GitHub| |Build Status| |CodeCov| |PyPI| |GPL license| |ArXiv|
+|GitHub| |Build Status| |CodeCov| |PyPI| |GPL license|
 
 
 .. |GitHub| image:: https://img.shields.io/badge/GitHub-optimusprimal-brightgreen.svg?style=flat
@@ -18,15 +18,29 @@ Optimus-Primal: Lightweight primal-dual solver
 ======================================================
 
 ``optimusprimal`` is a light weight proximal splitting Forward Backward Primal Dual based solver for convex optimization problems. 
-The current version supports finding the minimum of 
+The current version supports finding the minimum of combinations of at most four functions simultaneously denoted throughout as 
+:math:`f(x), h(A x), p(B x)` and :math:`g(C x)` where :math:`f, h`, and :math:`p` are lower semi continuous and have proximal operators, 
+and :math:`g` is differentiable. Note that here :math:`A`, :math:`B`, and :math:`C` are linear operators. 
+Combinations of these functions can result in optimisations in both the constrained setting, *i.e.*
 
-.. math:: \text{argmin} \big [ f(x) + h(A x) + p(B x) + g(x) \big ]
+.. math:: x^{\star} = \min{h(A x)}_x \quad s.t. \quad p(B x) \leq \epsilon
 
-where :math:`f, h`, and :math:`p` are lower semi continuous and have proximal operators, and :math:`g` is differentiable. Note that here :math:`A` and :math:`B` are linear operators.
-To learn more about proximal operators and algorithms, visit `proximity operator repository <http://proximity-operator.net/index.html>`_. We suggest that users read the tutorial `"The Proximity Operator Repository. User's guide" <http://proximity-operator.net/download/guide.pdf>`_.
+where :math:`\epsilon` is typically an iso-contour of the log-likelihood ball, and the unconstrained setting *e.g.*
 
-BASIC USAGE
-==============================================
+.. math:: x^{\text{map}} = \text{argmin}_x \big [ g(C x)) + \lambda h(A x) \big ]
+
+where map denotes the *maximum a posteriori* solution, and :math:`\lambda` is a Lagrangian multiplier balancing data-fidelity against 
+*a priori* assumed knowledge. To learn more about proximal operators and algorithms, visit `proximity operator repository <http://proximity-operator.net/index.html>`_. We suggest that users read the tutorial 
+`"The Proximity Operator Repository. User's guide" <http://proximity-operator.net/download/guide.pdf>`_.
+
+How to use this guide
+---------------------
+To get started, follow the :ref:`installation guide <Installation>`.  For a brief background of the implementation of the proximal primal-dual algorithm  please see the :ref:`background <Background>` 
+section of this guide, which provides sufficient background information. We have also provided a variety of pedagogical examples, including a number of interactive notebooks 
+that provide a step-by-step guide to get ``optimusprimal`` up and running for your particular application.  An up-to-date catalog of the software functionality can be found on the :ref:`API <Namespaces>` page. 
+
+Basic Usage
+------------
 First you will need to install ``optimusprimal`` PyPi by running
 
 .. code-block:: bash
@@ -61,8 +75,8 @@ Following this you can, for example, perform an constrained proximal primal dual
     x_est, = primal_dual.FBPD(y, options, None, None, h, p, None)         # Recover an estimate of x.
 
 
-CONTRIBUTORS
-==============================================
+Contributors 
+--------------------
 `Luke Pratley <https://www.lukepratley.com>`_, `Matthjis Mars <https://www.linkedin.com/in/matthijs-mars/>`_, `Matthew Price <https://scholar.google.com/citations?user=w7_VDLQAAAAJ&hl=en&authuser=1>`_.
 
 
@@ -83,10 +97,10 @@ CONTRIBUTORS
 
 .. toctree::
    :hidden:
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Tutorials
    
-   tutorials/index
+   auto_examples/index
 
 
 .. toctree::

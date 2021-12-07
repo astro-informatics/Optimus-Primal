@@ -8,8 +8,6 @@ Optimus-Primal: Lightweight primal-dual solver
     :target: https://codecov.io/gh/astro-informatics/Optimus-Primal
 .. image:: https://img.shields.io/badge/License-GPL-blue.svg
     :target: http://perso.crans.org/besson/LICENSE.html
-.. image:: http://img.shields.io/badge/arXiv-XXXX.0XXXX-orange.svg?style=flat
-    :target: https://arxiv.org/abs/XXXX.0XXXX
 
 A light weight proximal splitting Forward Backward Primal Dual based solver for convex optimization problems. 
 
