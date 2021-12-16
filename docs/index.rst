@@ -23,11 +23,11 @@ The current version supports finding the minimum of combinations of at most four
 and :math:`g` is differentiable. Note that here :math:`A`, :math:`B`, and :math:`C` are linear operators. 
 Combinations of these functions can result in optimisations in both the constrained setting, *i.e.*
 
-.. math:: x^{\star} = \min{h(A x)}_x \quad s.t. \quad p(B x) \leq \epsilon
+.. math:: x^{\star} = \min_x \big [h(A x) \big ] \quad s.t. \quad p(B x) \leq \epsilon
 
 where :math:`\epsilon` is typically an iso-contour of the log-likelihood ball, and the unconstrained setting *e.g.*
 
-.. math:: x^{\text{map}} = \text{argmin}_x \big [ g(C x)) + \lambda h(A x) \big ]
+.. math:: x^{\text{map}} = \min_x \big [ g(C x)) + \lambda h(A x) \big ]
 
 where map denotes the *maximum a posteriori* solution, and :math:`\lambda` is a Lagrangian multiplier balancing data-fidelity against 
 *a priori* assumed knowledge. To learn more about proximal operators and algorithms, visit `proximity operator repository <http://proximity-operator.net/index.html>`_. We suggest that users read the tutorial 
@@ -41,7 +41,7 @@ that provide a step-by-step guide to get ``optimusprimal`` up and running for yo
 
 Basic Usage
 ------------
-First you will need to install ``optimusprimal`` PyPi by running
+First you will need to install ``optimusprimal`` with PyPi by running
 
 .. code-block:: bash
 
@@ -77,7 +77,7 @@ Following this you can, for example, perform an constrained proximal primal dual
 
 Contributors 
 --------------------
-`Luke Pratley <https://www.lukepratley.com>`_, `Matthjis Mars <https://www.linkedin.com/in/matthijs-mars/>`_, `Matthew Price <https://scholar.google.com/citations?user=w7_VDLQAAAAJ&hl=en&authuser=1>`_.
+`Luke Pratley <https://www.lukepratley.com>`_, `Matthijs Mars <https://www.linkedin.com/in/matthijs-mars/>`_, `Matthew Price <https://cosmomatt.github.io>`_.
 
 
 .. toctree::
@@ -98,9 +98,13 @@ Contributors
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: Tutorials
+   :caption: Interactive Tutorials
    
-   auto_examples/index
+   tutorials/1d_constrained.nblink
+   tutorials/1d_unconstrained.nblink
+   tutorials/2d_constrained.nblink
+   tutorials/2d_unconstrained.nblink
+   tutorials/custom_operators.nblink
 
 
 .. toctree::

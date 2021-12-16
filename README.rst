@@ -22,7 +22,7 @@ To learn more about proximal operators and algorithms, visit `proximity operator
 
 QUICK INSTALL
 ==============================================
-You can install ``optimusprimal`` from PyPi by running
+You can install ``optimusprimal`` with PyPi by running
 
 .. code-block:: bash
 
@@ -75,7 +75,7 @@ After installing ``optimusprimal`` one can *e.g.* perform an constrained proxima
 
 CONTRIBUTORS
 ==============================================
-`Luke Pratley <https://www.lukepratley.com>`_, `Matthjis Mars <https://www.linkedin.com/in/matthijs-mars/>`_, `Matthew Price <https://scholar.google.com/citations?user=w7_VDLQAAAAJ&hl=en&authuser=1>`_.
+`Luke Pratley <https://www.lukepratley.com>`_, `Matthijs Mars <https://www.linkedin.com/in/matthijs-mars/>`_, `Matthew Price <https://cosmomatt.github.io>`_.
 
 LICENSE
 ==============================================
