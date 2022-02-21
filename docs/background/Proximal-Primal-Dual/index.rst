@@ -3,7 +3,7 @@ Proximal Primal-Dual Algorithm
 ****************************************
 General theoretical details about the algorithm used 
 
-Background maths for the algorithm etc.
+Background maths for the algorithm
 =======================================================
 Some more details about the algorithm
 

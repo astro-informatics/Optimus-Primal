@@ -8,8 +8,6 @@
     :target: https://badge.fury.io/py/optimusprimal
 .. image:: https://img.shields.io/badge/License-GPL-blue.svg
     :target: http://perso.crans.org/besson/LICENSE.html
-.. image:: http://img.shields.io/badge/arXiv-XXXX.XXXX-orange.svg?style=flat
-    :target: https://arxiv.org/abs/XXXX.XXXX
 
 |logo| Optimus-Primal: A Lightweight primal-dual solver
 ========================================================
@@ -24,7 +22,7 @@ To learn more about proximal operators and algorithms, visit `proximity operator
 
 QUICK INSTALL
 ==============================================
-You can install ``optimusprimal`` from PyPi by running
+You can install ``optimusprimal`` with PyPi by running
 
 .. code-block:: bash
 
@@ -77,7 +75,7 @@ After installing ``optimusprimal`` one can *e.g.* perform an constrained proxima
 
 CONTRIBUTORS
 ==============================================
-`Luke Pratley <https://www.lukepratley.com>`_, `Matthjis Mars <https://www.linkedin.com/in/matthijs-mars/>`_, `Matthew Price <https://scholar.google.com/citations?user=w7_VDLQAAAAJ&hl=en&authuser=1>`_.
+`Luke Pratley <https://www.lukepratley.com>`_, `Matthijs Mars <https://www.linkedin.com/in/matthijs-mars/>`_, `Matthew Price <https://cosmomatt.github.io>`_.
 
 LICENSE
 ==============================================
