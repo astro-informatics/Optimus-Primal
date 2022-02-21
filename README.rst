@@ -75,7 +75,7 @@ After installing ``optimusprimal`` one can *e.g.* perform an constrained proxima
 
 CONTRIBUTORS
 ==============================================
-`Luke Pratley <https://www.lukepratley.com>`_, `Matthijs Mars <https://www.linkedin.com/in/matthijs-mars/>`_, `Matthew Price <https://cosmomatt.github.io>`_.
+`Luke Pratley <https://www.lukepratley.com>`_, `Matthijs Mars <https://www.linkedin.com/in/matthijs-mars/>`_, `Matthew Price <https://cosmomatt.github.io>`_, `Jason McEwen <http://www.jasonmcewen.org>`_.
 
 LICENSE
 ==============================================

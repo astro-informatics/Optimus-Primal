@@ -1,37 +1,77 @@
-Optimus-Primal: Lightweight primal-dual solver
-==============================================
-.. image:: https://img.shields.io/badge/GitHub-Optimus-Primal-brightgreen.svg?style=flat
+Optimus-Primal: A Lightweight primal-dual solver
+========================================================
+
+.. image:: https://img.shields.io/badge/GitHub-optimusprimal-brightgreen.svg?style=flat
     :target: https://github.com/astro-informatics/Optimus-Primal
 .. image:: https://github.com/astro-informatics/Optimus-Primal/actions/workflows/python.yml/badge.svg
     :target: https://github.com/astro-informatics/Optimus-Primal/actions/workflows/python.yml
 .. image:: https://codecov.io/gh/astro-informatics/Optimus-Primal/branch/master/graph/badge.svg?token=AJIQGKU8D2
     :target: https://codecov.io/gh/astro-informatics/Optimus-Primal
+.. image:: https://badge.fury.io/py/optimusprimal.svg
+    :target: https://badge.fury.io/py/optimusprimal
 .. image:: https://img.shields.io/badge/License-GPL-blue.svg
     :target: http://perso.crans.org/besson/LICENSE.html
 
-A light weight proximal splitting Forward Backward Primal Dual based solver for convex optimization problems. 
-
+``optimusprimal`` is a light weight proximal splitting Forward Backward Primal Dual based solver for convex optimization problems. 
 The current version supports finding the minimum of f(x) + h(A x) + p(B x) + g(x), where f, h, and p are lower semi continuous and have proximal operators, and g is differentiable. A and B are linear operators.
+To learn more about proximal operators and algorithms, visit `proximity operator repository <http://proximity-operator.net/index.html>`_. We suggest that users read the tutorial `"The Proximity Operator Repository. User's guide" <http://proximity-operator.net/download/guide.pdf>`_.
 
-To learn more about proximal operators and algorithms, visit `proximity operator repository <http://proximity-operator.net/index.html>`_. We suggest that users read the tutorial `"The Proximity Operator Repository. User's guide"<http://proximity-operator.net/download/guide.pdf>`_.
-
-INSTALL
+QUICK INSTALL
 ==============================================
-You can install from the master branch
-
-.. code-block:: bash
-
-    pip install git+https://github.com/Luke-Pratley/Optimus-Primal.git@master#egg=optimusprimal
-
-or from a frozen version at `pypi <https://pypi.org/project/optimusprimal/>`_
+You can install ``optimusprimal`` with PyPi by running
 
 .. code-block:: bash
 
     pip install optimusprimal
 
+INSTALL FROM SOURCE
+==============================================
+Alternatively, you can install ``optimusprimal`` from GitHub by first cloning the repository 
+
+.. code-block:: bash
+
+    git clone git@github.com:astro-informatics/Optimus-Primal.git
+    cd Optimus-Primal
+
+and running the build script and run install tests by
+
+.. code-block:: bash 
+
+    bash build_optimusprimal.sh 
+    pytest --black optimusprimal/tests/
+
+BASIC USAGE
+==============================================
+After installing ``optimusprimal`` one can *e.g.* perform an constrained proximal primal dual reconstruction by
+
+.. code-block:: python 
+
+    import numpy as np 
+    import optimusprimal.primal_dual as primal_dual
+    import optimusprimal.linear_operators as linear_ops 
+    import optimusprimal.prox_operators as prox_ops 
+
+    options = {'tol': 1e-5, 'iter': 5000, 'update_iter': 50, 'record_iters': False}
+
+    # Load some data
+    y = np.load('Some observed signal y')                                 # Load a file of observed data.
+    epsilon = sigma * np.sqrt(y.size + 2 np.sqrt(y.size))                 # where sigma is your noise std.
+
+    # Define a forward model i.e. y = M(x) + n
+    M = np.ones_like(y)                                                   # Here M = Identity for simplicity.
+    p = prox_ops.l2_ball(epsilon, y, linear_ops.diag_matrix_operator(M))  # Create a l2-ball data-fidelity.
+
+    # Define a regularisation i.e. ||W(x)||_1
+    wav = ['db1', 'db3', 'db4']                                           # Select some wavelet dictionaries.
+    psi = linear_operators.dictionary(wav, levels=6, y.shape)             # Define multi-dictionary wavelets.
+    h = prox_ops.l1_norm(gamma=1, psi)                                    # Create an l1-norm regulariser.
+
+    # Recover an estiamte i.e. x_est = min[h(x)] s.t. p(x) <= epsilon
+    x_est, = primal_dual.FBPD(y, options, None, None, h, p, None)         # Recover an estimate of x.
+
 CONTRIBUTORS
 ==============================================
-`Luke Pratley <https://www.lukepratley.com>`_, `Matthijs Mars <https://www.linkedin.com/in/matthijs-mars/>`_, `Matthew Price <https://cosmomatt.github.io>`_.
+`Luke Pratley <https://www.lukepratley.com>`_, `Matthijs Mars <https://www.linkedin.com/in/matthijs-mars/>`_, `Matthew Price <https://cosmomatt.github.io>`_, `Jason McEwen <http://www.jasonmcewen.org>`_.
 
 LICENSE
 ==============================================

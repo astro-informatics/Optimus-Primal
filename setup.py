@@ -40,7 +40,7 @@ setup(
     version = "0.0.2",
     prefix='.',
     url='https://github.com/astro-informatics/Optimus-Primal',
-    author='Luke Pratley & Matthjis Mars & Matthew Price & Contributors',
+    author='Luke Pratley & Matthijs Mars & Matthew Price & Jason McEwen & Contributors',
     author_email='luke.pratley@gmail.com',
     license='GNU General Public License v3 (GPLv3)',
     install_requires=required,
