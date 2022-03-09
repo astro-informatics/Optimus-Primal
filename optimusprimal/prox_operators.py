@@ -1,8 +1,66 @@
+import abc
 import optimusprimal.linear_operators as linear_operators
 import numpy as np
 
 
-class l2_ball:
+class ProximalOperator(metaclass=abc.ABCMeta):
+    """Base abstract class for proximal functionals"""
+
+    @abc.abstractmethod
+    def __init__(self):
+        """Constructor setting the hyper-parameters and domains of the proximal operator
+
+        Must be implemented by derived class (currently abstract).
+        """
+
+    @abc.abstractmethod
+    def prox(self, x, gamma):
+        """Evaluates the l2-ball prox of x
+
+        Args:
+
+            x (np.ndarray): Array to evaluate proximal gradient
+            gamma (float): weighting of proximal gradient
+        """
+
+    @abc.abstractmethod
+    def fun(self, x):
+        """Placeholder for loss of functional term
+
+        Args:
+
+            x (np.ndarray): Array to evaluate model loss of
+
+        """
+
+    @abc.abstractmethod
+    def dir_op(self, x):
+        """Evaluates the forward sensing operator
+
+        Args:
+
+            x (np.ndarray): Array to transform
+
+        Returns:
+
+            Forward sensing operator applied to x
+        """
+
+    @abc.abstractmethod
+    def adj_op(self, x):
+        """Evaluates the forward adjoint sensing operator
+
+        Args:
+
+            x (np.ndarray): Array to adjoint transform
+
+        Returns:
+
+            Forward adjoint sensing operator applied to x
+        """
+
+
+class l2_ball(ProximalOperator):
     """This class computes the proximity operator of the l2 ball.
 
                         f(x) = (||Phi x - y|| < epsilon) ? 0. : infty
@@ -93,7 +151,7 @@ class l2_ball:
         return self.Phi.adj_op(x)
 
 
-class l_inf_ball:
+class l_inf_ball(ProximalOperator):
     """This class computes the proximity operator of the l_inf ball.
 
                         f(x) = (||Phi x - y||_inf < epsilon) ? 0. : infty
@@ -182,7 +240,7 @@ class l_inf_ball:
         return self.Phi.adj_op(x)
 
 
-class l1_norm:
+class l1_norm(ProximalOperator):
     """This class computes the proximity operator of the l2 ball.
 
                         f(x) = ||Psi x||_1 * gamma
@@ -270,12 +328,12 @@ class l1_norm:
         return self.Psi.adj_op(x)
 
 
-class l2_square_norm:
+class l2_square_norm(ProximalOperator):
     """This class computes the proximity operator of the l2 squared.
 
                         f(x) = 0.5/sigma^2 * ||Psi x||_2^2
 
-    When the input 'x' is an array. 0.5/sigma^2 is a regularization term. Psi is an operator.
+    When the input 'x' is an array. 0.5/sigma^2 is a regularisation term. Psi is an operator.
     """
 
     def __init__(self, sigma, Psi=None):
@@ -355,7 +413,7 @@ class l2_square_norm:
         return self.Psi.adj_op(x)
 
 
-class positive_prox:
+class positive_prox(ProximalOperator):
     """This class computes the proximity operator of the indicator function for
     positivity.
 
@@ -422,7 +480,7 @@ class positive_prox:
         return x
 
 
-class real_prox:
+class real_prox(ProximalOperator):
     """This class computes the proximity operator of the indicator function for
     reality.
 
@@ -489,7 +547,7 @@ class real_prox:
         return x
 
 
-class zero_prox:
+class zero_prox(ProximalOperator):
     """This class computes the proximity operator of the indicator function for zero.
 
                         f(x) = (0 == x) ? 0. : infty
@@ -564,7 +622,7 @@ class zero_prox:
         return self.op.adj_op(x)
 
 
-class poisson_loglike_ball:
+class poisson_loglike_ball(ProximalOperator):
     """This class computes the proximity operator of the log of Poisson distribution
 
                         f(x) = (1^t (x + b) - y^t log(x + b) < epsilon/2.) ? 0. : infty
@@ -705,7 +763,7 @@ class poisson_loglike_ball:
         return self.Phi.adj_op(x)
 
 
-class poisson_loglike:
+class poisson_loglike(ProximalOperator):
     """This class computes the proximity operator of the log of Poisson distribution
 
                         f(x) = 1^t (x + b) - y^t log(x + b)
@@ -792,7 +850,7 @@ class poisson_loglike:
         return self.Phi.adj_op(x)
 
 
-class l21_norm:
+class l21_norm(ProximalOperator):
     """This class computes the proximity operator of the l2 ball.
 
                         f(x) = (||Phi x - y|| < epsilon) ? 0. : infty
@@ -881,7 +939,7 @@ class l21_norm:
         return self.Phi.adj_op(x)
 
 
-class translate_prox:
+class translate_prox(ProximalOperator):
     """
     This class wraps an abstract proximal operator with an arbitrary translation
 
