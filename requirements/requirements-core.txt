@@ -2,6 +2,7 @@
 numpy 
 scipy
 PyWavelets
+tensorflow
 
 # Formatting pacakges
 black 

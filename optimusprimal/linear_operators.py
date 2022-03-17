@@ -1,3 +1,4 @@
+import abc
 import numpy as np
 import pywt
 import logging
@@ -46,11 +47,51 @@ def power_method(op, x_init, tol=1e-3, iters=1000):
     return val_new, x_new
 
 
-class identity:
+class LinearOperator(metaclass=abc.ABCMeta):
+    """Base abstract class for general linear operators"""
+
+    @abc.abstractmethod
+    def __init__(self):
+        """Constructor setting the hyper-parameters and domains of the operator
+
+        Must be implemented by derived class (currently abstract).
+        """
+
+    @abc.abstractmethod
+    def dir_op(self, x):
+        """Evaluates the forward sensing operator
+
+        Args:
+
+            x (np.ndarray): Array to transform
+
+        Returns:
+
+            Forward sensing operator applied to x
+        """
+
+    @abc.abstractmethod
+    def adj_op(self, x):
+        """Evaluates the forward adjoint sensing operator
+
+        Args:
+
+            x (np.ndarray): Array to adjoint transform
+
+        Returns:
+
+            Forward adjoint sensing operator applied to x
+        """
+
+
+class identity(LinearOperator):
     """
     Identity linear operator
 
     """
+
+    def __init__(self):
+        """Initialises an identity operator class"""
 
     def dir_op(self, x):
         """Computes the forward operator of the identity class
@@ -71,7 +112,7 @@ class identity:
         return x
 
 
-class projection:
+class projection(LinearOperator):
     """
     Projection wrapper for linear operator
     """
@@ -110,7 +151,7 @@ class projection:
         return z
 
 
-class sum:
+class sum(LinearOperator):
     """
     Sum wrapper for abstract linear operator
     """
@@ -147,7 +188,7 @@ class sum:
         return z
 
 
-class weights:
+class weights(LinearOperator):
     """
     weights wrapper for abstract linear operator
     """
@@ -244,7 +285,7 @@ class dct_operator:
         return scipy.fft.idctn(x, norm="ortho")
 
 
-class diag_matrix_operator:
+class diag_matrix_operator(LinearOperator):
     """
     Constructs a linear operator for coefficient wise multiplication W * x
     """
@@ -277,7 +318,7 @@ class diag_matrix_operator:
         return np.conj(self.W) * x
 
 
-class matrix_operator:
+class matrix_operator(LinearOperator):
     """
     Constructs a linear operator for matrix multiplication A * x
     """
@@ -311,7 +352,7 @@ class matrix_operator:
         return self.A_H @ x
 
 
-class db_wavelets:
+class db_wavelets(LinearOperator):
     """
     Constructs a linear operator for abstract Daubechies Wavelets
     """
@@ -398,7 +439,7 @@ class db_wavelets:
         )
 
 
-class dictionary:
+class dictionary(LinearOperator):
     """
     Constructs class to permit sparsity averaging across a collection of wavelet dictionaries
     """
