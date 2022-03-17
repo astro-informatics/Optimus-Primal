@@ -6,7 +6,9 @@ import time
 logger = logging.getLogger("Optimus Primal")
 
 
-def FBPD(x_init, options=None, g=None, f=None, h=None, p=None, r=None, viewer=None):
+def FBPD(
+    x_init, options=None, g=None, f=None, h=None, p=None, r=None, viewer=None, Theta=1
+):
     """Evaluates the Primal dual forward backward optimization
 
     Args:
@@ -14,10 +16,11 @@ def FBPD(x_init, options=None, g=None, f=None, h=None, p=None, r=None, viewer=No
         x_init (np.ndarray): First estimate solution
         options (dict): Python dictionary of optimisation configuration parameters
         g (Grad Class): Unconstrained data-fidelity class
-        f (Prox Class): Constrained data-fidelity class
+        p (Prox Class): Constrained data-fidelity class
         h (Prox Class): Proximal regularisation constraint
-        p (Prox Class): Positivity constraint
+        f (Prox Class): Positivity constraint
         r (Prox Class): Reality constraint
+        Theta (float): Primal-Dual acceleration balancing
         viewer (function): Plotting function for real-time viewing (must accept: x, iteration)
     """
     if f is None:
@@ -34,11 +37,22 @@ def FBPD(x_init, options=None, g=None, f=None, h=None, p=None, r=None, viewer=No
     y = h.dir_op(x) * 0.0
     z = p.dir_op(x) * 0
     w = r.dir_op(x) * 0
-    return FBPD_warm_start(x_init, y, z, w, options, g, f, h, p, r, viewer)
+    return FBPD_warm_start(x_init, y, z, w, options, g, f, h, p, r, viewer, Theta)
 
 
 def FBPD_warm_start(
-    x_init, y, z, w, options=None, g=None, f=None, h=None, p=None, r=None, viewer=None
+    x_init,
+    y,
+    z,
+    w,
+    options=None,
+    g=None,
+    f=None,
+    h=None,
+    p=None,
+    r=None,
+    viewer=None,
+    Theta=1,
 ):
     """Evaluates the Primal dual forward backward optimization with warm-start
 
@@ -50,10 +64,11 @@ def FBPD_warm_start(
         w (np.ndarray): First simulation from `r class'
         options (dict): Python dictionary of optimisation configuration parameters
         g (Grad Class): Unconstrained data-fidelity class
-        f (Prox Class): Constrained data-fidelity class
+        p (Prox Class): Constrained data-fidelity class
         h (Prox Class): Proximal regularisation constraint
-        p (Prox Class): Positivity constraint
+        f (Prox Class): Positivity constraint
         r (Prox Class): Reality constraint
+        Theta (float): Primal-Dual acceleration balancing
         viewer (function): Plotting function for real-time viewing (must accept: x, iteration)
     """
     # default inputs
@@ -85,11 +100,13 @@ def FBPD_warm_start(
     max_iter = options["iter"]
     update_iter = options["update_iter"]
     record_iters = options["record_iters"]
+
     # step-sizes
     tau = 1 / (g.beta + 2)
     sigmah = (1 / tau - g.beta / 2) / (h.beta + p.beta + r.beta)
     sigmap = (1 / tau - g.beta / 2) / (h.beta + p.beta + r.beta)
     sigmar = (1 / tau - g.beta / 2) / (h.beta + p.beta + r.beta)
+
     # initialization
     x = np.copy(x_init)
 
@@ -105,14 +122,18 @@ def FBPD_warm_start(
         x_old = np.copy(x)
         x = x - tau * (g.grad(x) + h.adj_op(y) + p.adj_op(z) + r.adj_op(w))
         x = f.prox(x, tau)
+
+        # Primal-Dual acceleration step
+        x_accel = x + Theta * (x - x_old)
+
         # dual forward-backward step
-        y = y + sigmah * h.dir_op(2 * x - x_old)
+        y = y + sigmah * h.dir_op(x_accel)
         y = y - sigmah * h.prox(y / sigmah, 1.0 / sigmah)
 
-        z = z + sigmap * p.dir_op(2 * x - x_old)
+        z = z + sigmap * p.dir_op(x_accel)
         z = z - sigmap * p.prox(z / sigmap, 1.0 / sigmap)
 
-        w = w + sigmar * r.dir_op(2 * x - x_old)
+        w = w + sigmar * r.dir_op(x_accel)
         w = w - sigmar * r.prox(w / sigmar, 1.0 / sigmar)
         # time and criterion
         if record_iters:
